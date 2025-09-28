@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -9,18 +8,28 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-      navigate("/login");
-    } catch (err) {
-      setError(err.response?.data?.error || "Registration failed");
+
+    // Simple frontend validation
+    if (!username || !email || !password) {
+      setError("Please fill all fields");
+      return;
     }
+
+    // Mock registration: just save data in localStorage (or ignore)
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    users.push({ username, email, password });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    // Clear form
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setError("");
+
+    // Redirect to Login
+    navigate("/login");
   };
 
   return (
